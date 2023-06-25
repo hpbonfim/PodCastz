@@ -1,4 +1,4 @@
-package com.trabalho_final_progmov.podcastz;
+package com.trabalho_final_progmov.podcastz.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.trabalho_final_progmov.podcastz.R;
 
 public class LoginActivity extends AppCompatActivity {
 
