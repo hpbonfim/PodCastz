@@ -2,7 +2,8 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Podcastz" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">#EF8321</item>
+        <item name="android:statusBarColor">#EF8321</item>
     </style>
 
     <style name="Theme.Podcastz" parent="Base.Theme.Podcastz" />
