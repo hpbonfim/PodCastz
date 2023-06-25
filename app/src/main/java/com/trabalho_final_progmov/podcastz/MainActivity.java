@@ -1,4 +1,4 @@
-package com.example.trab_final_progmov;
+package com.trabalho_final_progmov.podcastz;
 
 import androidx.appcompat.app.AppCompatActivity;
 

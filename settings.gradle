@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "trab_final_progmov"
+rootProject.name = "podcastz"
 include ':app'

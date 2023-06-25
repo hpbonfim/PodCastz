@@ -1,4 +1,4 @@
-package com.example.trab_final_progmov;
+package com.trabalho_final_progmov.podcastz;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.trab_final_progmov", appContext.getPackageName());
+        assertEquals("com.trabalho_final_progmov.podcastz", appContext.getPackageName());
     }
 }

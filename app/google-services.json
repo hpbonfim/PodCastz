@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "167066305659",
+    "project_id": "podcastz",
+    "storage_bucket": "podcastz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167066305659:android:c4c7f89aaa89897ed08ede",
+        "android_client_info": {
+          "package_name": "com.example.trab_final_progmov"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "167066305659-m96112es0b4atsk2isd0p5hf4difiqar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyz5weDgzl5thDr32RrhxhxWr5EkoI164"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "167066305659-m96112es0b4atsk2isd0p5hf4difiqar.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167066305659:android:47b605beb499d90ed08ede",
+        "android_client_info": {
+          "package_name": "com.trabalho_final_progmov.podcastz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "167066305659-m96112es0b4atsk2isd0p5hf4difiqar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyz5weDgzl5thDr32RrhxhxWr5EkoI164"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "167066305659-m96112es0b4atsk2isd0p5hf4difiqar.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
