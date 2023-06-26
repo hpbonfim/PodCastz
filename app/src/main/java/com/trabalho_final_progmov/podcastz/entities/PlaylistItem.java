@@ -39,4 +39,8 @@ public class PlaylistItem {
   public String getEnclosureType() {
     return enclosureType;
   }
+
+  public String getEnclosureUrl() {
+    return enclosureUrl;
+  }
 }

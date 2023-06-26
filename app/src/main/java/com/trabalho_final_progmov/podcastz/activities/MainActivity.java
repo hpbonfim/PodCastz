@@ -44,6 +44,6 @@ public class MainActivity extends AppCompatActivity {
       System.out.println(item.getTitle());
     }
 
-    adapter = new PlaylistAdapter(items);
+    adapter = new PlaylistAdapter(playlist.getItems());
   }
 }
