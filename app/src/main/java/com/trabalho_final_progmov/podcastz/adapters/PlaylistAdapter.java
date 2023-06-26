@@ -1,5 +1,7 @@
 package com.trabalho_final_progmov.podcastz.adapters;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +24,13 @@ public class PlaylistAdapter
   private List<PlaylistItem> items;
   private MediaPlayer mediaPlayer;
 
-  public PlaylistAdapter(List<PlaylistItem> items) {
+  private AudioManager audioManager;
+
+  public PlaylistAdapter(List<PlaylistItem> items, Context context) {
     this.items = items;
     mediaPlayer = new MediaPlayer();
+    audioManager =
+      (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
   }
 
   @NonNull
@@ -66,13 +72,20 @@ public class PlaylistAdapter
             );
           } else {
             try {
+              holder.playPauseButton.setImageResource(
+                android.R.drawable.ic_media_pause
+              );
               mediaPlayer.reset();
               mediaPlayer.setDataSource(item.getEnclosureUrl());
               mediaPlayer.prepare();
-              mediaPlayer.setVolume(1.0f, 1.0f);
               mediaPlayer.start();
-              holder.playPauseButton.setImageResource(
-                android.R.drawable.ic_media_pause
+              int maxVolume = audioManager.getStreamMaxVolume(
+                AudioManager.STREAM_MUSIC
+              );
+              audioManager.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                maxVolume,
+                0
               );
             } catch (IOException e) {
               e.printStackTrace();
