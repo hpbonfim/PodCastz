@@ -75,10 +75,19 @@ public class PlaylistAdapter
               holder.playPauseButton.setImageResource(
                 android.R.drawable.ic_media_pause
               );
-              mediaPlayer.reset();
+              if (!mediaPlayer.isPlaying()) {
+                mediaPlayer.reset();
+              }
               mediaPlayer.setDataSource(item.getEnclosureUrl());
-              mediaPlayer.prepare();
-              mediaPlayer.start();
+              mediaPlayer.setOnPreparedListener(
+                new MediaPlayer.OnPreparedListener() {
+                  @Override
+                  public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                  }
+                }
+              );
+              mediaPlayer.prepareAsync();
               int maxVolume = audioManager.getStreamMaxVolume(
                 AudioManager.STREAM_MUSIC
               );
@@ -89,11 +98,22 @@ public class PlaylistAdapter
               );
             } catch (IOException e) {
               e.printStackTrace();
+            } catch (IllegalStateException e) {
+              e.printStackTrace();
             }
           }
         }
       }
     );
+  }
+
+  @Override
+  public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+    super.onDetachedFromRecyclerView(recyclerView);
+    if (mediaPlayer != null) {
+      mediaPlayer.release();
+      mediaPlayer = null;
+    }
   }
 
   @Override
