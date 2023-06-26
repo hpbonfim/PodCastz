@@ -9,14 +9,23 @@ import com.trabalho_final_progmov.podcastz.R;
 import com.trabalho_final_progmov.podcastz.adapters.PlaylistAdapter;
 import com.trabalho_final_progmov.podcastz.entities.PlaylistItem;
 import com.trabalho_final_progmov.podcastz.entities.PlaylistResponse;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-  // MOCK
-  // https://api.podcastindex.org/api/1.0/recent/episodes?max=1&pretty
-  String jsonMockString =
-    "{\"status\":\"true\",\"items\":[{\"id\":15567529412,\"title\":\"June 25, 2023 Sunday Service\",\"link\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=625231741471259\",\"description\":\"\",\"guid\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=625231741471259\",\"datePublished\":1687743720,\"datePublishedPretty\":\"June 25, 2023 8:42pm\",\"dateCrawled\":1687725540,\"enclosureUrl\":\"https:\\/\\/mp3.sermonaudio.com\\/filearea\\/625231741471259\\/625231741471259.mp3\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":19115228,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"https:\\/\\/vps.sermonaudio.com\\/resize_image\\/broadcasters\\/albumart\\/1400\\/1400\\/hopebiblechurch-04.jpg\",\"feedItunesId\":470194996,\"feedImage\":\"https:\\/\\/vps.sermonaudio.com\\/resize_image\\/broadcasters\\/albumart\\/1400\\/1400\\/hopebiblechurch-04.jpg\",\"feedId\":855953,\"feedTitle\":\"Hope Bible Church of Tampa\",\"feedLanguage\":\"en-us\"},{\"id\":15567548405,\"title\":\"\\u6d4b\\u8bd5\\u4eba\\u5458\\u5982\\u4f55\\u68c0\\u67e5\\u4ee3\\u7801\\u8d28\\u91cf\\uff1f\",\"link\":\"https:\\/\\/qapodcast.typlog.io\\/episodes\\/quality-in-desk-check\",\"description\":\" <p>\\u6b22\\u8fce\\u6536\\u542c\\u8d28\\u91cf\\u4e09\\u4eba\\u884c\\u7b2c\\u4e94\\u5b63\\u3002\\u5982\\u679c\\u4f60\\u662f\\u7ecf\\u5e38\\u6536\\u542c\\u8d28\\u91cf\\u4e09\\u4eba\\u884c\\u7684\\u670b\\u53cb\\uff0c\\u53ef\\u80fd\\u4f1a\\u4e86\\u89e3\\u6211\\u4eec\\u4e4b\\u524d\\u804a\\u8fc7\\u7684\\u51e0\\u4e4e\\u6bcf\\u4e00\\u671f\\uff0c\\u90fd\\u662f\\u95ee\\u9898\\u9a71\\u52a8\\u7684\\uff0c\\u6211\\u4eec\\u57fa\\u4e8e\\u67d0\\u4e2a\\u8f6f\\u4ef6\\u8d28\\u91cf\\u65b9\\u9762\\u7684\\u95ee\\u9898\\uff0c\\u6216\\u8005\\u6d4b\\u8bd5\\u4eba\\u5458\\u7684\\u906d\\u9047\\uff0c\\u6765\\u5c55\\u5f00\\u8ba8\\u8bba\\u3002<\\/p>\\n<p>\\u7b2c\\u4e94\\u5b63\\uff0c\\u4f1a\\u6709\\u4e00\\u4e9b\\u4e0d\\u540c\\u3002\\u8fd9\\u4e00\\u5b63\\u6211\\u4eec\\u5c1d\\u8bd5\\u4ee5\\u5927\\u89c4\\u6a21\\u7684\\u865a\\u62df\\u9879\\u76ee\\u4f5c\\u4e3a\\u80cc\\u666f\\uff0c\\u6765\\u63a2\\u8ba8\\u5728\\u5927\\u89c4\\u6a21\\u9879\\u76ee\\u4e2d\\uff0c\\u6309\\u7167\\u8f6f\\u4ef6\\u7684\\u751f\\u547d\\u5468\\u671f\\u7684\\u987a\\u5e8f\\uff0c\\u6211\\u4eecQA\\u6216\\u8005\\u8bf4\\u8d28\\u91cf\\u4eba\\u5458\\uff0c\\u53ef\\u80fd\\u4f1a\\u906d\\u9047\\u5230\\u7684\\u3001\\u4e0e\\u8f6f\\u4ef6\\u8d28\\u91cf\\u76f8\\u5173\\u7684\\u3001\\u65b9\\u65b9\\u9762\\u9762\\u7684\\u95ee\\u9898\\u3002<\\/p>\\n<p>\\u5728\\u672c\\u671f\\u8282\\u76ee\\u4e2d\\uff0c\\u6211\\u4eec\\u804a\\u5230\\u4e86\\u5f00\\u53d1\\u4eba\\u5458\\u7f16\\u7801\\u5b8c\\u6210\\u4e4b\\u540e\\u7684\\u4e00\\u4e2a\\u91cd\\u8981\\u73af\\u8282 Desk Check\\uff0c\\u8fd9\\u4e2a\\u73af\\u8282\\u9700\\u8981\\u54ea\\u4e9b\\u4eba\\u5458\\u53c2\\u4e0e\\uff0c\\u5982\\u4f55\\u4e00\\u8d77\\u534f\\u4f5c\\uff0c\\u4ee5\\u53ca\\u4f1a\\u6709\\u54ea\\u4e9b\\u8d28\\u91cf\\u76f8\\u5173\\u7684\\u5173\\u6ce8\\u70b9\\u3002<\\/p>\\n<h3>\\u672c\\u671f\\u4e3b\\u64ad<\\/h3>\\n\\n\\u4e3b\\u6301\\u4eba\\uff1a\\u5218\\u5189\\n\\u5609\\u5bbe\\uff1a\\u6797\\u51b0\\u7389\\uff0c\\u4e8e\\u6653\\u5357\\n\\n<h3>\\u65f6\\u95f4\\u8f74<\\/h3>\\n\\n02:31 Desk check \\u662f\\u4ec0\\u4e48\\u6837\\u7684\\u5b9e\\u8df5\\uff1f\\u53c2\\u4e0e\\u89d2\\u8272\\u6709\\u54ea\\u4e9b\\uff1f\\n08:08 \\u5609\\u5bbe\\u4eec\\u5bf9\\u4e8eDesk Check\\u7684\\u65f6\\u957f\\u548c\\u9700\\u6c42\\u5185\\u5bb9\\u7684\\u9a8c\\u8bc1\\u5b58\\u5728\\u5206\\u6b67\\uff1f\\n22:21 \\u53ef\\u6d4b\\u6027\\u3001\\u9519\\u8bef\\u548c\\u65e5\\u5fd7\\u76f8\\u5173\\u5185\\u5bb9\\u9700\\u8981\\u5728Desk Check\\u9a8c\\u8bc1\\u5417\\uff1f\\n32:52 \\u5982\\u4f55\\u786e\\u4fdd\\u975e\\u529f\\u80fd\\u9700\\u6c42\\u4e5f\\u80fd\\u5728Desk Check\\u4e2d\\u8986\\u76d6\\u5230\\uff1f\\n36:50 \\u5927\\u89c4\\u6a21\\u590d\\u6742\\u7cfb\\u7edf\\u7684\\u4f9d\\u8d56\\u6027\\u4f1a\\u5f71\\u54cdDesk Check\\u5417\\uff1f\\n39:07 Desk Check\\u8fd8\\u9700\\u8981\\u5173\\u6ce8\\u4ee3\\u7801\\uff1f\\n41:08 Desk Check\\u7684\\u672c\\u8d28\\u662f\\u4ec0\\u4e48\\uff1f\\u5982\\u4f55\\u9ad8\\u6548\\u5b9e\\u73b0\\uff1f\\n\\n<h3>\\u5173\\u4e8e\\u8d28\\u91cf\\u4e09\\u4eba\\u884c<\\/h3>\\n<p>\\u8d28\\u91cf\\u4e09\\u4eba\\u884c\\u662f\\u4e00\\u6b3e\\u6765\\u81eaThoughtworks\\uff08\\u601d\\u7279\\u6c83\\u514b\\uff09\\u7684\\u64ad\\u5ba2\\u8282\\u76ee\\uff0c\\u6211\\u4eec\\u5173\\u6ce8\\u8f6f\\u4ef6\\u884c\\u4e1a\\u6d4b\\u8bd5\\u9886\\u57df\\u7684\\u73b0\\u72b6\\u548c\\u672a\\u6765\\uff0c\\u8d28\\u91cf\\u548c\\u6d4b\\u8bd5\\u4eba\\u5458\\u7684\\u804c\\u4e1a\\u53d1\\u5c55\\u3002<\\/p>\\n<p>\\u4f60\\u53ef\\u4ee5\\u5728\\u5c0f\\u5b87\\u5b99 \\uff0c\\u559c\\u9a6c\\u62c9\\u96c5\\uff0c\\u4ee5\\u53caPocket Casts\\uff0cGoogle Podcasts\\uff0cApple Podcast\\u7b49\\u6cdb\\u7528\\u578b\\u64ad\\u5ba2\\u5ba2\\u6237\\u7aef\\uff0c\\u641c\\u7d22\\u8d28\\u91cf\\u4e09\\u4eba\\u884c\\uff0c\\u8ba2\\u9605\\u6536\\u542c\\u5230\\u6211\\u4eec\\u7684\\u8282\\u76ee\\u3002<\\/p>\\n \",\"guid\":\"https:\\/\\/qapodcast.typlog.io\\/episodes\\/quality-in-desk-check\",\"datePublished\":1687743635,\"datePublishedPretty\":\"June 25, 2023 8:40pm\",\"dateCrawled\":1687743690,\"enclosureUrl\":\"https:\\/\\/r.typlog.com\\/eyJzIjoxNTI5LCJlIjo2ODMwOCwicCI6MiwidSI6IjE5MjUubXAzIn0.fwW51GT6zBBeFviD7co4DDcpEaE\\/qapodcast\\/8313198947_471925.mp3\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":67060671,\"explicit\":0,\"episode\":7,\"episodeType\":\"full\",\"season\":5,\"image\":\"https:\\/\\/i.typlog.com\\/qapodcast\\/8313198959_042041.png?x-oss-process=style\\/sl\",\"feedItunesId\":1532191950,\"feedImage\":\"https:\\/\\/i.typlog.com\\/qapodcast\\/8329187009_877319.png?x-oss-process=style\\/sl\",\"feedId\":2753822,\"feedTitle\":\"\\u8d28\\u91cf\\u4e09\\u4eba\\u884c\",\"feedLanguage\":\"zh\"},{\"id\":15567533240,\"title\":\"The Mindset For Ministry\",\"link\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=62523126422256\",\"description\":\"A new MP3 sermon from Founders Baptist Church is now available on SermonAudio with the following details:<BR><BR>\\n\\n<b>Title:<\\/b> The Mindset For Ministry<BR>\\n<b>Subtitle:<\\/b> Non Series - Luke<BR>\\n<b>Speaker:<\\/b> Richard Caldwell Jr.<BR>\\n<b>Broadcaster:<\\/b> Founders Baptist Church<BR>\\n<b>Event:<\\/b> Sunday - AM<BR>\\n<b>Date:<\\/b> 6\\/25\\/2023<BR>\\n<b>Bible:<\\/b> Luke 17:1-7<BR>\\n<b>Length:<\\/b> 51 min.\",\"guid\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=62523126422256\",\"datePublished\":1687743600,\"datePublishedPretty\":\"June 25, 2023 8:40pm\",\"dateCrawled\":1687729912,\"enclosureUrl\":\"https:\\/\\/mp3.sermonaudio.com\\/filearea\\/62523126422256\\/62523126422256.mp3\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":0,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"\",\"feedItunesId\":1186448170,\"feedImage\":\"https:\\/\\/vps.sermonaudio.com\\/resize_image\\/speakers\\/albumart\\/1400\\/1400\\/327-0001.JPG\",\"feedId\":613119,\"feedTitle\":\"Richard Caldwell Jr. on SermonAudio\",\"feedLanguage\":\"en-us\"},{\"id\":15567532033,\"title\":\"We're All in This Together\",\"link\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=625231734317316\",\"description\":\"\",\"guid\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=625231734317316\",\"datePublished\":1687743600,\"datePublishedPretty\":\"June 25, 2023 8:40pm\",\"dateCrawled\":1687728414,\"enclosureUrl\":\"https:\\/\\/mp3.sermonaudio.com\\/filearea\\/625231734317316\\/625231734317316.mp3\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":23868721,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"https:\\/\\/vps.sermonaudio.com\\/resize_image\\/broadcasters\\/albumart\\/1400\\/1400\\/cbcypsi.1648401260.jpg\",\"feedItunesId\":1540997617,\"feedImage\":\"https:\\/\\/vps.sermonaudio.com\\/resize_image\\/broadcasters\\/albumart\\/1400\\/1400\\/cbcypsi.1648401260.jpg\",\"feedId\":3398894,\"feedTitle\":\"Calvary Baptist Church\",\"feedLanguage\":\"en-us\"},{\"id\":15567516857,\"title\":\"Joseph #18: The Dreams are One Dream\",\"link\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=625231710354057\",\"description\":\"A new MP3 sermon from Sacramento Covenant Reformed Church is now available on SermonAudio with the following details:<BR><BR>\\n\\n<b>Title:<\\/b> Joseph #18: The Dreams are One Dream<BR>\\n<b>Subtitle:<\\/b> The Story of Joseph<BR>\\n<b>Speaker:<\\/b> Kurt Snow<BR>\\n<b>Broadcaster:<\\/b> Sacramento Covenant Reformed Church<BR>\\n<b>Event:<\\/b> Sunday School<BR>\\n<b>Date:<\\/b> 6\\/25\\/2023<BR>\\n<b>Bible:<\\/b> Genesis 41:17-24<BR>\\n<b>Length:<\\/b> 32 min.\",\"guid\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=625231710354057\",\"datePublished\":1687743600,\"datePublishedPretty\":\"June 25, 2023 8:40pm\",\"dateCrawled\":1687714989,\"enclosureUrl\":\"https:\\/\\/mp3.sermonaudio.com\\/filearea\\/625231710354057\\/625231710354057.mp3\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":0,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"\",\"feedItunesId\":271127255,\"feedImage\":\"https:\\/\\/www.sermonaudio.com\\/images\\/sermonaudio-new-combo2-1400.jpg\",\"feedId\":827571,\"feedTitle\":\"Dreams on SermonAudio\",\"feedLanguage\":\"en-us\"},{\"id\":15567548372,\"title\":\"Episode 138: Evan Graham\",\"link\":\"https:\\/\\/theworldshapers.com\\/2023\\/06\\/25\\/episode-138-evan-graham\\/?utm_source=rss&utm_medium=rss&utm_campaign=episode-138-evan-graham\",\"description\":\"An hour-long chat with Evan Graham, author of the Calling Void series of science fiction stories and the new novel Tantalus Depths. Websiteevangraham.org Facebook@AuthorEvanGraham Twitter@evanmgraham Evan Graham\\u2019s Amazon Page The Introduction Evan Graham consistently refuses to seek help for his lifelong sci-fi addiction. Since there are not enough stories currently in existence to satisfy him, \\u2026 <p >Continue reading \\\"Episode 138: Evan Graham\\\"<\\/p>\\n<p>Source<\\/p>\",\"guid\":\"https:\\/\\/theworldshapers.com\\/?p=2094\",\"datePublished\":1687743576,\"datePublishedPretty\":\"June 25, 2023 8:39pm\",\"dateCrawled\":1687743630,\"enclosureUrl\":\"https:\\/\\/media.blubrry.com\\/theworldshapers\\/mc.blubrry.com\\/theworldshapers\\/TWS138-2023-06-25-EvanGraham2.mp3?awCollectionId=581719&awEpisodeId=10360561&aw_0_azn.pgenre=Arts&aw_0_1st.ri=blubrry&aw_0_azn.pcountry=CA&aw_0_azn.planguage=en&aw_0_cnt.rss=https%3A%2F%2Ftheworldshapers.com%2Ffeed%2Fpodcast%2F\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":48627293,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"https:\\/\\/theworldshapers.com\\/wp-content\\/uploads\\/powerpress\\/The_Worldshapers_Podcast_Art_New.jpg\",\"feedItunesId\":1428087733,\"feedImage\":\"https:\\/\\/theworldshapers.com\\/wp-content\\/uploads\\/powerpress\\/The_Worldshapers_Podcast_Art_New.jpg\",\"feedId\":1146935,\"feedTitle\":\"The Worldshapers\",\"feedLanguage\":\"en-US\"},{\"id\":15567525657,\"title\":\"Peter's Parting Words\",\"link\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=62523173831485\",\"description\":\"\",\"guid\":\"https:\\/\\/www.sermonaudio.com\\/sermoninfo.asp?SID=62523173831485\",\"datePublished\":1687743540,\"datePublishedPretty\":\"June 25, 2023 8:39pm\",\"dateCrawled\":1687721936,\"enclosureUrl\":\"https:\\/\\/mp3.sermonaudio.com\\/filearea\\/62523173831485\\/62523173831485.mp3\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":23771922,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"https:\\/\\/vps.sermonaudio.com\\/resize_image\\/broadcasters\\/albumart\\/1400\\/1400\\/sgbcofbonhamtx.1680463992.jpg\",\"feedItunesId\":1544285307,\"feedImage\":\"https:\\/\\/vps.sermonaudio.com\\/resize_image\\/broadcasters\\/albumart\\/1400\\/1400\\/sgbcofbonhamtx.1680463992.jpg\",\"feedId\":3459164,\"feedTitle\":\"Sovereign Grace Baptist Church\",\"feedLanguage\":\"en-us\"},{\"id\":15567548278,\"title\":\"Dry July; Making A Positive Impact on Cancer Care\",\"link\":\"https:\\/\\/www.southernfm.com.au\\/show\\/fridayomm\\/dry-july-making-a-positive-impact-on-cancer-care\\/\",\"description\":\"<p>Katie Evans, CEO of the Dry July Foundation, talks to Craig Francis about the positive benefits for individuals to take on the 31 day challenge for \\u2018Dry July\\u2019 and how people can get involved.\\u00a0 Katie also discusses the significant impact that the fundraising has towards helping those battling the effects of cancer.Related Posts:<\\/p>\\n\\nDry July; Helping Yourself and the Community\\nOn Mind, Body, Heart and Soul \\u2013 Caro Jonas from \\u201cThe Life Force Cancer Support Foundation\\u201d joins us\\n\\n<p><\\/p>\",\"guid\":\"https:\\/\\/www.southernfm.com.au\\/?p=60495\",\"datePublished\":1687743480,\"datePublishedPretty\":\"June 25, 2023 8:38pm\",\"dateCrawled\":1687743530,\"enclosureUrl\":\"https:\\/\\/media.blubrry.com\\/southernfm\\/d1iujfyugbouvc.cloudfront.net\\/FOM-Dry-July-230623.mp3\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":29411786,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"\",\"feedItunesId\":null,\"feedImage\":\"https:\\/\\/www.southernfm.com.au\\/wp-content\\/uploads\\/logos\\/88.3_Logo.jpg\",\"feedId\":5715512,\"feedTitle\":\"Podcast 3\",\"feedLanguage\":\"en-US\"},{\"id\":15567548175,\"title\":\"2023-06-26 01:37:42.071 GMT\",\"link\":\"https:\\/\\/livewire.io\\/new-podcast-reflections\\/\",\"description\":\"<p>Fetched by <b>an unknown user agent<\\/b>!\\n\\nat 2023-06-26T01:37:42.071Z\\nfrom IP: 2600:3c02::f03c:93ff:febb:77f4\\n<p>\\n<p>Headers:\\naccept: *\\/*\\naccept-encoding: gzip\\nconnection: Keep-Alive\\nif-modified-since: Thu, 01 Jan 1970 00:00:01 GMT\\nuser-agent: Aggrivator (PodcastIndex.org)\\/v0.1.7\\n<p>\\n<p>This podcast reflects a single request, it does absolutely no server-side logging or tracking, so help us categorize the unknown user agent you just found by sending an email to reflections@livewire.io, thanks!<\\/p>\",\"guid\":\"36389fceae5c4d34a01b47d00fc65688\",\"datePublished\":1687743462,\"datePublishedPretty\":\"June 25, 2023 8:37pm\",\"dateCrawled\":1687743477,\"enclosureUrl\":\"https:\\/\\/api.livewire.io\\/reflections\\/36389fceae5c4d34a01b47d00fc65688.mp3\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":204800,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"\",\"feedItunesId\":null,\"feedImage\":\"https:\\/\\/livewire.io\\/reflections.png?v1\",\"feedId\":2801143,\"feedTitle\":\"Reflections\",\"feedLanguage\":\"en\"},{\"id\":15567295759,\"title\":\"Blog The Program for Windows (Update 26 June 2023)\",\"link\":\"\",\"description\":\"\",\"guid\":\"EventSentry Light 5.0.1.104 and similar applications\",\"datePublished\":1687743373,\"datePublishedPretty\":\"June 25, 2023 8:36pm\",\"dateCrawled\":1687743377,\"enclosureUrl\":\"https:\\/\\/softfree.tk\\/podcasts\\/music.mp3?title=BlogProgram&collections=BlogProgram152022\",\"enclosureType\":\"audio\\/mpeg\",\"enclosureLength\":607988,\"explicit\":0,\"episode\":null,\"episodeType\":\"full\",\"season\":0,\"image\":\"\",\"feedItunesId\":null,\"feedImage\":\"\",\"feedId\":6438489,\"feedTitle\":\"Softfree\",\"feedLanguage\":\"en-us\"}],\"count\":10,\"max\":\"10\",\"description\":\"Found matching items.\"}";
+  private static final String API_URL =
+    "https://api.podcastindex.org/api/1.0/recent/episodes?max=5";
+  private static final String API_KEY = "6MEGVQUKHU2FV6TRWSGZ";
+  private static final String API_SECRET =
+    "H5A3ejkrdF28LUDKL8SdQ6Q8afDR6TZVe534XfGn";
   private PlaylistAdapter adapter;
 
   @Override
@@ -31,18 +40,72 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setupAdapter() {
-    Gson gson = new Gson();
-    PlaylistResponse playlist = gson.fromJson(
-      jsonMockString,
-      PlaylistResponse.class
-    );
-    List<PlaylistItem> items = playlist.getItems();
+    OkHttpClient client = new OkHttpClient();
 
-    // DEBUG LIST
-    for (PlaylistItem item : items) {
-      System.out.println(item.getTitle());
+    String unixTime = String.valueOf(System.currentTimeMillis() / 1000L);
+    String authString = API_KEY + API_SECRET + unixTime;
+    String authHash = "";
+
+    try {
+      MessageDigest md = MessageDigest.getInstance("SHA-1");
+      md.update(authString.getBytes(StandardCharsets.UTF_8));
+      byte[] digest = md.digest();
+      authHash = String.format("%040x", new BigInteger(1, digest));
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
     }
 
-    adapter = new PlaylistAdapter(playlist.getItems(), this);
+    Request request = new Request.Builder()
+      .url(API_URL)
+      .addHeader("X-Auth-Date", unixTime)
+      .addHeader("X-Auth-Key", API_KEY)
+      .addHeader("Authorization", authHash)
+      .build();
+    client
+      .newCall(request)
+      .enqueue(
+        new okhttp3.Callback() {
+          @Override
+          public void onFailure(okhttp3.Call call, IOException e) {
+            e.printStackTrace();
+          }
+
+          @Override
+          public void onResponse(okhttp3.Call call, okhttp3.Response response)
+            throws IOException {
+            if (!response.isSuccessful()) {
+              throw new IOException("Unexpected code " + response);
+            } else {
+              Gson gson = new Gson();
+              PlaylistResponse playlist = gson.fromJson(
+                response.body().string(),
+                PlaylistResponse.class
+              );
+              List<PlaylistItem> items = playlist.getItems();
+
+              // DEBUG LIST
+              for (PlaylistItem item : items) {
+                System.out.println(item.getTitle());
+              }
+
+              adapter =
+                new PlaylistAdapter(playlist.getItems(), MainActivity.this);
+
+              runOnUiThread(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    RecyclerView recyclerView = findViewById(R.id.recyclerView);
+                    recyclerView.setLayoutManager(
+                      new LinearLayoutManager(MainActivity.this)
+                    );
+                    recyclerView.setAdapter(adapter);
+                  }
+                }
+              );
+            }
+          }
+        }
+      );
   }
 }
